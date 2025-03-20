@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="style.css" rel="stylesheet">
+    <title>Quiz Game Editor</title>
+    <style>
+        .flex-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-container">
+        <h2>Create a Mini-Game</h2>
+        <h3>Choose a Game Type to Create</h3>
+        <div class="game-types">
+            <label class="game-card">
+                <input type="radio" name="gameType" value="MCQ Quiz">
+                <div class="game-icon">📖</div>
+                <p><strong>MCQ Quiz</strong></p>
+                <p>Test knowledge with multiple-choice questions.</p>
+            </label>
+
+            <label class="game-card">
+                <input type="radio" name="gameType" value="Fill in the Blanks">
+                <div class="game-icon">✍️</div>
+                <p><strong>Fill in the Blanks</strong></p>
+                <p>Complete the sentences by filling in the missing words.</p>
+            </label>
+        </div>
+        <div class="flex-container">
+            <form id="uploadForm" enctype="multipart/form-data">
+                <input type="file" id="pdfFile" name="pdf" accept=".pdf" class="form-control" />
+                <input type="number" id="numQuestions" name="numberOfQuestions" class="form-control"
+                    placeholder="Enter number of questions" />
+                <button type="submit" class="btn btn-primary" id="generateGame">Generate</button>
+            </form>
+        </div>
+        <div id="result"></div>
+
+        <h3>Manage Questions</h3>
+        <input type="text" id="questionInput" class="form-control" placeholder="Enter a question" />
+        <button id="addQuestion" class="btn btn-info">Add Question</button>
+        <ul id="questionList" class="list-group"></ul>
+        <h3>Game Details</h3>
+        <input type="text" id="gameName" class="form-control" placeholder="Enter game name" />
+        <input type="number" id="gameTimeLimit" class="form-control" placeholder="Time per question (seconds)" min="5" max="120" value="30" />
+        <button id="submitGame" class="btn btn-success">Submit Game</button>
+        
+        <script>
+            document.getElementById('submitGame').addEventListener('click', function () {
+    const gameName = document.getElementById('gameName').value.trim();
+    const timeLimit = parseInt(document.getElementById('gameTimeLimit').value, 10) || 30; // Default to 30 sec
+
+    if (!gameName) {
+        alert("Please enter a game name.");
+        return;
+    }
+
+    const gameId = crypto.randomUUID().slice(0, 8);
+
+    // Fetch questions from the HTML
+    const questionElements = document.querySelectorAll('.list-group-item');
+    let questions = [];
+
+    questionElements.forEach((questionElement) => {
+        const questionText = questionElement.querySelector('strong').textContent.trim();
+        const options = [];
+        let correctAnswer = null;
+
+        // Fetch options
+        questionElement.querySelectorAll('.option-list li').forEach((optionElement, index) => {
+            const optionText = optionElement.childNodes[2].textContent.trim(); // Get text next to input
+            options.push(optionText);
+
+            // Check if the radio button is checked (correct answer)
+            const radioInput = optionElement.querySelector('input[type="radio"]');
+            if (radioInput.checked) {
+                correctAnswer = index; // Store the correct option's index
+            }
+        });
+
+        // Ensure question has at least one option and a correct answer selected
+        if (options.length > 0 && correctAnswer !== null) {
+            questions.push({
+                question: questionText,
+                type: "radio",
+                choices: options,
+                correctAnswer: correctAnswer
+            });
+        }
+    });
+
+    if (questions.length === 0) {
+        alert("Please add at least one valid question with a correct answer.");
+        return;
+    }
+
+    const newGame = {
+        id: gameId,
+        name: gameName,
+        timeLimit: timeLimit, // Store a single time limit for all questions
+        questions: questions
+    };
+
+    // Retrieve existing games from local storage or initialize an empty array
+    let savedGames = JSON.parse(localStorage.getItem("games")) || [];
+    savedGames.push(newGame);
+
+    // Save updated games list to local storage
+    localStorage.setItem("games", JSON.stringify(savedGames));
+
+    // Redirect to the game created page
+    window.location.href = `/gameCreated.html?gameId=${gameId}`;
+});
+        </script>
+        
+        
+    </div>
+
+    <script>
+        // Add manual question
+        document.getElementById('addQuestion').addEventListener('click', function () {
+            const questionText = document.getElementById('questionInput').value;
+            if (questionText) {
+                addQuestionToDOM({ question: questionText, choices: [] });
+                document.getElementById('questionInput').value = '';
+            }
+        });
+
+        // Event delegation for question list
+        document.getElementById('questionList').addEventListener('click', function (event) {
+            if (event.target.classList.contains('delete-question')) {
+                event.target.closest('.list-group-item').remove();
+            }
+
+            if (event.target.classList.contains('add-option')) {
+                const optionInput = event.target.previousElementSibling;
+                const optionText = optionInput.value;
+                if (optionText) {
+                    const optionList = event.target.closest('.list-group-item').querySelector('.option-list');
+                    const questionText = optionList.closest('li').querySelector('strong').textContent;
+                    addOptionToQuestion(optionList, questionText, optionText);
+                    optionInput.value = '';
+                }
+            }
+
+            if (event.target.classList.contains('delete-option')) {
+                event.target.closest('li').remove();
+            }
+        });
+        // Form submission for file upload
+        const form = document.getElementById('uploadForm');
+        const resultDiv = document.getElementById('result');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+
+            // Add the number of questions to the form data
+            const numQuestions = document.getElementById('numQuestions').value;
+            formData.append('numberOfQuestions', numQuestions);
+
+            
+            try {
+                const response = await fetch('/generate-questions', {
+                    method: 'POST',
+                    body: formData,
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to generate questions');
+                }
+
+                let questions = await response.json();
+                // console.log(questions)
+                questions=JSON.parse(questions)
+                console.log(questions);
+                // Clear existing result and add new questions
+                resultDiv.className = 'alert alert-success';
+                resultDiv.innerText = 'Questions generated successfully!';
+                questions.forEach(question => {
+                    console.log(question.question);
+                    const questionElem = addQuestionToDOM(question);
+                });
+                
+                // Reset form
+                form.reset();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.className = 'alert alert-danger';
+                resultDiv.innerText = `Error generating questions: ${error.message}`;
+            }
+            resultDiv.style.display = 'block';
+            
+            // Hide result message after 3 seconds
+            setTimeout(() => {
+                resultDiv.style.display = 'none';
+            }, 3000);
+        });
+        
+
+        // Helper function to add question to DOM
+        function addQuestionToDOM(questionData) {
+            const listItem = document.createElement('li');
+            listItem.className = "list-group-item";
+            listItem.innerHTML = `
+            <strong>${questionData.question}</strong>
+        <ul class='option-list'></ul>
+        <input type='text' class='form-control option-input' placeholder='Enter an option' />
+        <button class='btn btn-success btn-sm add-option'>Add Option</button>
+        <button class='btn btn-danger btn-sm delete-question'>Delete Question</button>
+      `;
+
+            const optionList = listItem.querySelector('.option-list');
+            if (questionData.choices && questionData.choices.length > 0) {
+                questionData.choices.forEach(choice => {
+                    addOptionToQuestion(optionList, questionData.question, choice);
+                });
+            }
+            if (questionData.correctAnswer)
+                optionList.querySelectorAll("input")[questionData.correctAnswer - 1].checked = true;
+
+            document.getElementById('questionList').appendChild(listItem);
+            return listItem
+        }
+
+        // Helper function to add option to question
+        function addOptionToQuestion(optionList, questionText, optionText) {
+            console.log("adding option")
+            const optionItem = document.createElement('li');
+            optionItem.innerHTML = `
+        <input type='radio' name='question-${questionText.replace(/\s+/g, '-').toLowerCase()}' class='question-option' />
+        ${optionText}
+        <button class='btn btn-danger btn-xs delete-option'>Delete</button>
+      `;
+            optionList.appendChild(optionItem);
+        }
+    </script>
+</body>
+
+</html>

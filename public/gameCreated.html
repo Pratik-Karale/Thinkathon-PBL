@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Created</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+        }
+        .game-link {
+            display: block;
+            margin: 15px 0;
+            font-size: 16px;
+            color: #007bff;
+            word-wrap: break-word;
+        }
+        .btn {
+            margin-top: 10px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Game Created Successfully! 🎉</h2>
+        <p>Share this link to invite players:</p>
+        
+        <a id="gameLink" class="game-link" target="_blank"></a>
+        
+        <button id="copyBtn" class="btn btn-info">📋 Copy Link</button>
+        <button id="shareBtn" class="btn btn-success">📤 Share</button>
+    </div>
+
+    <script>
+        // Get game ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const gameId = urlParams.get("gameId");
+
+        if (gameId) {
+            const baseUrl = window.location.origin; // Dynamically detects the base URL
+            const gameUrl = `${baseUrl}/game.html?gameId=${gameId}`;
+
+            // Display the game link
+            const gameLinkElement = document.getElementById("gameLink");
+            gameLinkElement.href = gameUrl;
+            gameLinkElement.textContent = gameUrl;
+
+            // Copy link functionality
+            document.getElementById("copyBtn").addEventListener("click", () => {
+                navigator.clipboard.writeText(gameUrl).then(() => {
+                    alert("Game link copied to clipboard!");
+                }).catch(err => {
+                    console.error("Failed to copy: ", err);
+                });
+            });
+
+            // Share button functionality (if supported)
+            document.getElementById("shareBtn").addEventListener("click", () => {
+                if (navigator.share) {
+                    navigator.share({
+                        title: "Join my game!",
+                        text: "Click the link to play:",
+                        url: gameUrl
+                    }).catch(err => console.error("Error sharing:", err));
+                } else {
+                    alert("Your browser doesn't support the share feature.");
+                }
+            });
+        } else {
+            alert("Invalid game ID.");
+        }
+    </script>
+
+</body>
+</html>

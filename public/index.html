@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link href="style.css" rel="stylesheet">
+  <title>Thinkathon</title>
+</head>
+
+<body>
+  <div class="main-container">
+    <div class="game-entry">
+      <h2>Enter Game PIN</h2>
+      <input type="text" id="gamePin" class="form-control" placeholder="Enter PIN" />
+      <button id="joinGame" class="btn btn-primary">Join Game</button>
+    </div>
+
+    <div class="host-game">
+      <h2>Host a Game</h2>
+      <button id="hostGame" class="btn btn-success">Host Game</button>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('joinGame').addEventListener('click', function() {
+      const pin = document.getElementById('gamePin').value;
+      if (pin) {
+        window.location.href = `/game?id=${pin}`;
+      } else {
+        alert('Please enter a valid PIN.');
+      }
+    });
+
+    document.getElementById('hostGame').addEventListener('click', function() {
+      window.location.href = "/host.html";
+    });
+  </script>
+</body>
+
+</html>
