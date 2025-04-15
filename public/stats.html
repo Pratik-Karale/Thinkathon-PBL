@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Thinkathon Stats</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #fafafa;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      background-color: #805ad5;
+      color: white;
+      padding: 10px 16px;
+      align-items: center;
+    }
+
+    .logo img {
+      height: 40px;
+    }
+
+    .profile-icon {
+      font-size: 24px;
+    }
+
+    h2 {
+      margin: 16px;
+      font-size: 22px;
+    }
+
+    .level-box {
+      margin: 0 16px;
+      background-color: #f1f1f1;
+      border: 2px solid #d0e0ff;
+      padding: 12px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #ddd;
+      border-radius: 5px;
+      margin: 8px 16px 16px;
+      overflow: hidden;
+    }
+
+    .progress {
+      width: 70%;
+      height: 100%;
+      background: #805ad5;
+    }
+
+    .section {
+      padding: 0 16px;
+    }
+
+    .activity-wrapper {
+      margin: 16px 0;
+      background-color: #0d1117;
+      padding: 16px;
+      border-radius: 8px;
+      color: #ccc;
+    }
+
+    .month-labels {
+      display: flex;
+      font-size: 10px;
+      justify-content: space-around;
+      margin-left: 30px;
+    }
+
+    .activity-chart {
+      display: flex;
+    }
+
+    .week {
+      display: grid;
+      grid-template-rows: repeat(7, 1fr);
+      gap: 4px;
+      margin-right: 4px;
+    }
+
+    .activity-cell {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+      background-color: #2d2d2d;
+      transition: transform 0.1s ease;
+    }
+
+    .activity-cell:hover {
+      transform: scale(1.2);
+    }
+
+    .level-0 { background-color: #2d2d2d; }
+    .level-1 { background-color: #9be9a8; }
+    .level-2 { background-color: #40c463; }
+    .level-3 { background-color: #30a14e; }
+    .level-4 { background-color: #216e39; }
+
+    .stats-summary {
+      display: flex;
+      justify-content: space-around;
+      margin: 16px 0;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .achievements {
+      padding: 0 16px;
+    }
+
+    .achievements h3 {
+      margin-bottom: 8px;
+    }
+
+    .badge-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .badge {
+      background: #fff5e0;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .badge p {
+      margin: 4px 0 0;
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 24px;
+      padding: 12px;
+      background: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <img src="THINKATHON1.png" alt="Thinkathon Logo">
+      </div>
+      <div class="profile-icon">👤</div>
+    </header>
+
+    <h2>Your Stats</h2>
+
+    <div class="level-box">
+      <span>183 Level</span>
+      <span>Season ends in 36hrs</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress"></div>
+    </div>
+
+    <div class="section">
+      <h3>Activity</h3>
+      <div class="activity-wrapper">
+        <div class="month-labels">
+          <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+        </div>
+        <div class="activity-chart" id="activityChart"></div>
+      </div>
+    </div>
+
+    <div class="stats-summary">
+      <div>
+        <div>234</div>
+        <div>Games Won</div>
+      </div>
+      <div>
+        <div>234</div>
+        <div>Achievements</div>
+      </div>
+      <div>
+        <div>234</div>
+        <div>Rank</div>
+      </div>
+    </div>
+
+    <div class="achievements">
+      <h3>My Achievements</h3>
+      <div class="badge-grid">
+        <div class="badge">🏅<p>Lifelong Learner</p><small>500 Played</small></div>
+        <div class="badge">🏅<p>Lifelong Learner</p><small>500 Played</small></div>
+        <div class="badge">🏅<p>Lifelong Learner</p><small>500 Played</small></div>
+        <div class="badge">🏅<p>Lifelong Learner</p><small>500 Played</small></div>
+        <div class="badge">🏅<p>Lifelong Learner</p><small>500 Played</small></div>
+        <div class="badge">🏅<p>Lifelong Learner</p><small>500 Played</small></div>
+      </div>
+    </div>
+
+    <footer>
+      <span>⭐</span>
+      <span>⭐</span>
+      <span>⭐</span>
+    </footer>
+  </div>
+
+  <script>
+    const chart = document.getElementById('activityChart');
+    const weeks = 20; // Adjust weeks shown
+    const daysInWeek = 7;
+
+    for (let i = 0; i < weeks; i++) {
+      const week = document.createElement('div');
+      week.className = 'week';
+
+      for (let j = 0; j < daysInWeek; j++) {
+        const day = document.createElement('div');
+        const level = Math.floor(Math.random() * 5); // Level 0 to 4
+        day.className = `activity-cell level-${level}`;
+        day.title = `${Math.floor(Math.random() * 10)} activities`;
+        week.appendChild(day);
+      }
+
+      chart.appendChild(week);
+    }
+  </script>
+</body>
+</html>

@@ -38,6 +38,7 @@
 <body>
 
     <div class="container">
+        <h1 id="pin"></h1>
         <h2>Game Created Successfully! 🎉</h2>
         <p>Share this link to invite players:</p>
         
@@ -55,7 +56,7 @@
         if (gameId) {
             const baseUrl = window.location.origin; // Dynamically detects the base URL
             const gameUrl = `${baseUrl}/game.html?gameId=${gameId}`;
-
+            document.querySelector("#pin").textContent=gameId;
             // Display the game link
             const gameLinkElement = document.getElementById("gameLink");
             gameLinkElement.href = gameUrl;
@@ -86,6 +87,7 @@
             alert("Invalid game ID.");
         }
     </script>
+  <script type="module" src="./firebaseauth.js"></script>
 
 </body>
 </html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Thinkathon Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #fafafa;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      background-color: #805ad5;
+      color: white;
+      padding: 10px 16px;
+      font-weight: bold;
+      align-items: center;
+    }
+
+    .logo img {
+      height: 40px;
+    }
+
+    h2 {
+      margin: 16px;
+    }
+
+    .level-box {
+      margin: 0 16px;
+      background-color: #f1f1f1;
+      border: 2px solid #d0e0ff;
+      padding: 12px;
+      border-radius: 8px;
+    }
+
+    .level-box span {
+      display: inline-block;
+      margin-right: 10px;
+      font-weight: bold;
+    }
+
+    .progress-bar {
+      height: 10px;
+      background: #ccc;
+      border-radius: 5px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .progress {
+      width: 70%;
+      height: 100%;
+      background: #4a90e2;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      margin: 16px 0;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .active-tab {
+      border-bottom: 2px solid #805ad5;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px;
+    }
+
+    .card {
+      background-color: #f0f0f0;
+      margin: 8px 16px;
+      padding: 12px;
+      border-radius: 8px;
+    }
+
+    .card h4 {
+      margin: 0 0 8px;
+    }
+
+    .tags {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .tags span {
+      background: #d0d0ff;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+    }
+
+    .score {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .achievements {
+      padding: 0 16px;
+    }
+
+    .badges {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+      overflow-x: auto;
+    }
+
+    .badge {
+      background: #fff5e0;
+      padding: 16px;
+      text-align: center;
+      border-radius: 12px;
+      width: 100px;
+      flex-shrink: 0;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 24px;
+      padding: 12px;
+    }
+  </style>
+
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <img src="THINKATHON1.png" alt="Thinkathon Logo">
+      </div>
+      <div class="profile-icon">👤</div>
+    </header>
+    
+    <h2>Good Morning!</h2>
+    
+    <div class="level-box">
+      <span>183 Level</span>
+      <span>Season ends in 36hrs</span>
+      <div class="progress-bar">
+        <div class="progress"></div>
+      </div>
+    </div>
+    
+    <div class="tabs">
+      <span class="active-tab">More Statistics</span>
+      <span>Global Leaderboard</span>
+    </div>
+    
+    <section class="recent">
+      <div class="section-header">
+        <h3>Recently Played</h3>
+        <a href="#">All Played</a>
+      </div>
+
+      <div class="card">
+        <h4>Fundamental structure of cell</h4>
+        <div class="tags">
+          <span>Biology</span>
+          <span>Science</span>
+        </div>
+        <div class="score">
+          <span>#23</span>
+          <span>234 Pts</span>
+        </div>
+      </div>
+      
+      <div class="card">
+        <h4>Fundamental structure of cell</h4>
+        <div class="tags">
+          <span>Biology</span>
+          <span>Science</span>
+        </div>
+        <div class="score">
+          <span>#23</span>
+          <span>234 Pts</span>
+        </div>
+      </div>
+      
+      <div class="card">
+        <h4>Fundamental structure of cell</h4>
+        <div class="tags">
+          <span>Biology</span>
+          <span>Science</span>
+        </div>
+        <div class="score">
+          <span>#23</span>
+          <span>234 Pts</span>
+        </div>
+      </div>
+    </section>
+    
+    <section class="achievements">
+      <h3>Achievements</h3>
+      <div class="badges">
+        <div class="badge">🏅<p>Lifelong Learner</p></div>
+        <div class="badge">🏅<p>Lifelong Learner</p></div>
+        <div class="badge">🏅<p>Lifelong Learner</p></div>
+      </div>
+    </section>
+    
+    <section class="games">
+      <div class="section-header">
+        <h3>Games Created</h3>
+        <a href="#">All Created</a>
+      </div>
+      
+      <div class="card">
+        <h4>Fundamental structure of cell</h4>
+        <div class="tags">
+          <span>Biology</span>
+          <span>Science</span>
+        </div>
+        <div class="score">
+          <span>Played By</span>
+          <span>23444</span>
+        </div>
+      </div>
+      
+      <div class="card">
+        <h4>Fundamental structure of cell</h4>
+        <div class="tags">
+          <span>Biology</span>
+          <span>Science</span>
+        </div>
+      </div>
+    </section>
+    
+    <footer>
+      <span>⭐</span>
+      <span>⭐</span>
+      <span>⭐</span>
+    </footer>
+    
+    <button id="logout-btn">Logout</button><br>
+    <a href="stats.html">View statistics</a><br>
+    <a href="host.html">Create Game</a><br>
+    <div class="game-entry">
+      <h2>Enter Game PIN</h2>
+      <input type="text" id="gamePin" class="form-control" placeholder="Enter PIN" />
+      <button id="joinGame" class="btn btn-primary">Join Game</button>
+    </div>
+    <script>
+      document.getElementById('joinGame').addEventListener('click', function() {
+        const pin = document.getElementById('gamePin').value;
+      if (pin) {
+        window.location.href = `/game.html?gameId=${pin}`;
+      } else {
+        alert('Please enter a valid PIN.');
+      }
+    });
+    
+    </script>
+  <script type="module" src="./firebaseauth.js"></script>
+  </div>
+</body>
+</html>

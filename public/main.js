@@ -1,3 +1,50 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import { getDatabase, ref, get, set,child } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBu2AnUJUzb3-CXRbLcAY3GJublg4fph-w",
+  authDomain: "pbldbkahoot.firebaseapp.com",
+  databaseURL: "https://pbldbkahoot-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "pbldbkahoot",
+  storageBucket: "pbldbkahoot.appspot.com",
+  messagingSenderId: "30163259605",
+  appId: "1:30163259605:web:aea8ad936f8574886a525c",
+  measurementId: "G-F38FGRQKH1"
+};
+
+// Initialize Firebase
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+// Submit score to leaderboard
+function submitScoreToLeaderboard(gameId, score) {
+  const user = auth.currentUser;
+
+  if (!user) {
+    console.error("User is not logged in!");
+    return Promise.reject(new Error("User must be logged in to submit score"));
+  }
+
+  const userId = user.uid;
+
+  // games/{gameId}/leaderboard/{userId}
+  const leaderboardRef = ref(db, `games/${gameId}/leaderboard/${userId}`);
+
+  return set(leaderboardRef, score)
+    .then(() => {
+      console.log("Score submitted successfully!");
+    })
+    .catch((error) => {
+      console.error("Error updating leaderboard:", error);
+      throw error;
+    });
+}
+
+
+
 const QUIZ_CATEGORIES = [
   {category: 'js', title: 'JavaScript'},
   {category: 'java', title: 'Java'},
@@ -322,6 +369,10 @@ class UI {
     this.resultCard.classList.remove('hidden');
 
     this.result.innerHTML = numberOfCorrectAnswers + '/5';
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const gameId = urlParams.get("gameId");
+    submitScoreToLeaderboard(gameId,numberOfCorrectAnswers);
 
     this.swiperWrapper.innerHTML = cardsWithAnswers.join('');
   }
@@ -407,7 +458,7 @@ class Controller {
     let index = this.game.getCurrentQuizIndex();
     let isCorrect = this.quizService.checkUserAnswer(answer, index, this.game.getQuizzes());
     this.ui.showIsCorrect(index, isCorrect);
-
+    console.log("ccscscsccs",isCorrect);
     await this.ui.hideCard();
     let result = await this.ui.renderNextQuiz();
 
@@ -505,29 +556,36 @@ class QuizService {
     // Get gameId from URL params
     const urlParams = new URLSearchParams(window.location.search);
     const gameId = urlParams.get("gameId");
-
+  
     if (!gameId) {
       return Promise.reject(new Error("Game ID is missing in URL!"));
     }
-
-    // Fetch game data from localStorage
-    let savedGames = JSON.parse(localStorage.getItem("games")) || [];
-    let game = savedGames.find(g => g.id === gameId);
-
-    if (!game) {
-      return Promise.reject(new Error("Game not found!"));
-    }
-
-    let quizzes = game.questions || [];
-
-    // Ensure at least 5 quizzes exist
-    if (quizzes.length < 5) {
-      return Promise.reject(new Error("There are not enough quizzes"));
-    }
-
-    return Promise.resolve(this.shuffleQuizzes(quizzes));
+  
+    // Fetch game data from Firebase Realtime Database
+    const gameRef = ref(db, 'games/' + gameId);
+  
+    return get(gameRef)
+      .then(snapshot => {
+        if (!snapshot.exists()) {
+          return Promise.reject(new Error("Game not found in Firebase!"));
+        }
+  
+        let game = snapshot.val();
+        console.log(game)
+        let quizzes = game.questions || [];
+  
+        // Ensure at least 5 quizzes exist
+        if (quizzes.length < 5) {
+          return Promise.reject(new Error("There are not enough quizzes"));
+        }
+  
+        return Promise.resolve(this.shuffleQuizzes(quizzes));
+      })
+      .catch(error => {
+        return Promise.reject(new Error("Error fetching game data: " + error.message));
+      });
   }
-
+  
   shuffleQuizzes(quizzes) {
     const shuffledQuizzes = [];
 

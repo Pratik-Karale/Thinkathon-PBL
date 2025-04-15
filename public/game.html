@@ -81,10 +81,22 @@
         <div id="result" class="quiz-result__title">3/5</div>
         <div class="quiz-result__button-container">
           <button id="view-answers" class="button-default">View correct answers</button>
+          <button id="leaderboard-answers" class="button-default">View Leaderboard</button>
         </div>
       </div>
+      <script>
+        document.querySelector("#leaderboard-answers").addEventListener("click", () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const gameId = urlParams.get("gameId");
+    
+    if (gameId) {
+        window.location.href = `./leaderboard.html?gameId=${gameId}`;
+    } else {
+        console.error("gameId not found in URL parameters.");
+    }
+});
 
-      <button class="submit restart">Restart</button>
+      </script>
     </div>
 
     <!-- Slides with answers -->
@@ -130,39 +142,54 @@
 
     </div>
   </div>
-  <script>
+<!-- Firebase Scripts -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
-document.addEventListener("DOMContentLoaded", function () {
-    // Get the gameId from URL params
+  const firebaseConfig = {
+    apiKey: "AIzaSyBu2AnUJUzb3-CXRbLcAY3GJublg4fph-w",
+    authDomain: "pbldbkahoot.firebaseapp.com",
+    databaseURL: "https://pbldbkahoot-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "pbldbkahoot",
+    storageBucket: "pbldbkahoot.appspot.com",
+    messagingSenderId: "30163259605",
+    appId: "1:30163259605:web:aea8ad936f8574886a525c",
+    measurementId: "G-F38FGRQKH1"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  document.addEventListener("DOMContentLoaded", function () {
     const urlParams = new URLSearchParams(window.location.search);
     const gameId = urlParams.get("gameId");
 
     if (!gameId) {
-        alert("Game ID is missing!");
-        return;
+      alert("Game ID is missing!");
+      return;
     }
 
-    // Retrieve games from local storage
-    let savedGames = JSON.parse(localStorage.getItem("games")) || [];
-    
-    // Find the game with the given gameId
-    const game = savedGames.find(g => g.id === gameId);
+    const gameRef = ref(db, `games/${gameId}`);
+    get(gameRef)
+      .then(snapshot => {
+        if (!snapshot.exists()) {
+          alert("Game not found in Firebase!");
+          return;
+        }
 
-    if (!game) {
-        alert("Game not found!");
-        return;
-    }
-
-    // Set the quiz name and time limit
-    setTimeout(()=>{
-      console.log(game.name)
-      document.getElementById("quiz-label").innerHTML = game.name || "Untitled";
-      document.getElementById("quiz-time-limit").innerHTML = game.timeLimit || 40; // Default 40s if not set
-    },1000)
-});
-
-  </script>
-  <script src='main.js'></script>
+        const game = snapshot.val();
+        document.getElementById("quiz-label").innerHTML = game.name || "Untitled";
+        document.getElementById("quiz-time-limit").innerHTML = game.timeLimit || 40;
+      })
+      .catch(error => {
+        console.error("Firebase read error:", error);
+        alert("Failed to load game data from Firebase.");
+      });
+  });
+</script>
+<script src='main.js' type="module"></script>
   <!-- <input type="text" id="username" placeholder="Enter Username">
 <button id="submitButton" class="submit" disabled>Submit</button> -->
 
